@@ -209,6 +209,9 @@ Content-Type: application/json
 }
 ```
 
+> `telefono` y `email` son **opcionales** (RF-01): pueden omitirse o enviarse vacíos
+> (se normalizan a `null`). Si se envía un teléfono, debe tener al menos 7 dígitos.
+
 ### Pacientes (RF-02)
 
 | Método | Ruta | Descripción |
@@ -361,7 +364,7 @@ Todas las respuestas de error comparten un cuerpo uniforme, producido por
 | Código | Cuándo |
 |---|---|
 | `400 Bad Request` | Validación de entrada fallida (`fieldErrors` detalla cada campo), parámetro mal tipado o JSON malformado |
-| `404 Not Found` | Recurso inexistente (médico, paciente o cita) |
+| `404 Not Found` | Recurso inexistente (médico, paciente o cita) o ruta no mapeada |
 | `409 Conflict` | Violación de regla de negocio (franja ocupada, horario inválido, penalizaciones, documento duplicado, etc.) |
 | `500 Internal Server Error` | Error no controlado (sin exponer detalles internos; se registran en el log) |
 
@@ -373,16 +376,20 @@ Todas las respuestas de error comparten un cuerpo uniforme, producido por
 ./mvnw test
 ```
 
-La suite cubre los flujos críticos y casos borde:
+La suite (38 pruebas) cubre los flujos críticos y casos borde:
 
 - **`HorarioAtencionServiceTest`** — generación de franjas (20 entre semana, 10 los
   sábados, 0 domingos/festivos) y validación de franjas (alineación a 30 min, límites).
 - **`CitaServiceTest`** — reserva feliz y rechazo por cada regla (RN-01 a RN-05),
-  cancelación con y sin penalización, cancelación de cita no programada, y cálculo
-  de disponibilidad excluyendo franjas ocupadas. Usa un `Clock` fijo.
+  cancelación con y sin penalización, cancelación de cita no programada,
+  reprogramación (RN-06: franja libre, franja ocupada, estado inválido) y cálculo de
+  disponibilidad excluyendo franjas ocupadas. Usa un `Clock` fijo para los bordes temporales.
+- **`MedicoServiceTest`** — alta con solo campos obligatorios y normalización de los
+  opcionales (teléfono/email) a `null`.
 - **`PacienteServiceTest`** — alta, documento duplicado y recurso inexistente.
+- **`TelefonoValidacionTest`** — el teléfono exige al menos 7 dígitos reales (RF-01/RF-02).
 - **`MedicoControllerTest` / `CitaControllerTest`** — capa web (MockMvc): códigos
-  HTTP 201/400/409/200 y forma de la respuesta.
+  HTTP 201/400/409/200/404 (incluida ruta inexistente) y forma de la respuesta.
 
 ---
 
