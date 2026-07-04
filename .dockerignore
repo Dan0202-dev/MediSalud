@@ -1,0 +1,9 @@
+target/
+data/
+.git/
+.idea/
+.vscode/
+*.iml
+run-out.log
+run-err.log
+HELP.md
