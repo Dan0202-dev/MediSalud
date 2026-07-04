@@ -482,17 +482,24 @@ docker build -t medisalud-agendamiento .
 docker run -p 8080:8080 medisalud-agendamiento
 ```
 
-### Nube
+### Nube (Render)
 
 La imagen es desplegable en cualquier PaaS que soporte contenedores
-(Render, Railway, Fly.io, Google Cloud Run, etc.). Pasos típicos:
+(Render, Railway, Fly.io, Google Cloud Run, etc.). Pasos en **Render**:
 
-1. Publicar el repositorio en GitHub.
-2. Crear un servicio web desde el repo apuntando al `Dockerfile`.
-3. Exponer el puerto `8080`.
+1. Entrar en [render.com](https://render.com) y *"Sign in with GitHub"*.
+2. *New → Web Service* y seleccionar el repositorio `MediSalud`.
+3. Render detecta el `Dockerfile` automáticamente (*Runtime: Docker*).
+4. Elegir el plan *Free* y crear el servicio.
 
-> Para producción se recomienda migrar de H2 en archivo a una base de datos
-> gestionada (PostgreSQL) ajustando el `application.properties`.
+La app lee el puerto de la variable de entorno `PORT` (`server.port=${PORT:8080}`),
+que Render inyecta automáticamente, así que no hay que configurar nada más. En unos
+minutos la API queda pública en la URL que asigna Render (Swagger en `…/swagger-ui.html`).
+
+> **Nota sobre la persistencia en la nube:** con H2 en archivo, el disco del plan
+> gratuito es efímero (los datos se reinician al redeplegar). Para persistencia real
+> en producción se migraría a una base de datos gestionada (PostgreSQL) ajustando el
+> `application.properties`; la capa JPA no requiere cambios de lógica.
 
 ---
 
