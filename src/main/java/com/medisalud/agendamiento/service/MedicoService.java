@@ -28,10 +28,15 @@ public class MedicoService {
         Medico medico = Medico.builder()
                 .nombreCompleto(request.nombreCompleto().trim())
                 .especialidad(request.especialidad().trim())
-                .telefono(request.telefono())
-                .email(request.email())
+                .telefono(normalizarOpcional(request.telefono()))
+                .email(normalizarOpcional(request.email()))
                 .build();
         return MedicoResponse.fromEntity(medicoRepository.save(medico));
+    }
+
+    /** Campos opcionales (RF-01): un valor ausente o en blanco se guarda como null. */
+    private static String normalizarOpcional(String valor) {
+        return (valor == null || valor.isBlank()) ? null : valor.trim();
     }
 
     @Transactional(readOnly = true)

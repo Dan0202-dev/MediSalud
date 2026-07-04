@@ -20,12 +20,13 @@ public record MedicoRequest(
         @Size(max = 100, message = "La especialidad no puede superar 100 caracteres")
         String especialidad,
 
-        // Opcional: si viene, debe tener al menos 7 digitos (se admiten separadores).
-        @Pattern(regexp = "^[0-9()+\\-\\s]{7,30}$",
+        // Opcional (RF-01): puede omitirse o venir vacio; si trae contenido, debe
+        // tener al menos 7 digitos (se admiten separadores). El vacio se normaliza a null.
+        @Pattern(regexp = "^(|[0-9()+\\-\\s]{7,30})$",
                 message = "El telefono debe tener al menos 7 digitos")
         String telefono,
 
-        // Opcional: si viene, debe ser un email valido.
+        // Opcional (RF-01): si trae contenido, debe ser un email valido.
         @Email(message = "El email no tiene un formato valido")
         @Size(max = 150)
         String email) {
