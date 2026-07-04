@@ -3,6 +3,7 @@ package com.medisalud.agendamiento.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -84,5 +85,11 @@ class CitaControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.estado").value("CANCELADA"))
                 .andExpect(jsonPath("$.fechaCancelacion").exists());
+    }
+
+    @Test
+    void rutaInexistente_devuelve404NoNo500() throws Exception {
+        mockMvc.perform(get("/api/ruta-que-no-existe"))
+                .andExpect(status().isNotFound());
     }
 }

@@ -229,6 +229,54 @@ class CitaServiceTest {
                 .isInstanceOf(BusinessRuleException.class);
     }
 
+    // ----------------------------------------------------------------- RN-06
+    @Test
+    void reprogramar_franjaLibre_cancelaAnteriorYCreaNueva() {
+        Cita original = citaProgramada(20L, LocalDateTime.of(2026, 7, 6, 14, 0)); // >2h, sin penalizacion
+        LocalDateTime nueva = LocalDateTime.of(2026, 7, 7, 11, 0);
+        when(citaRepository.findById(20L)).thenReturn(Optional.of(original));
+        when(citaRepository.existsByMedicoIdAndFechaHoraAndEstado(any(), any(), any())).thenReturn(false);
+        when(citaRepository.existsByPacienteIdAndFechaHoraAndEstado(any(), any(), any())).thenReturn(false);
+        when(citaRepository.save(any(Cita.class))).thenAnswer(inv -> {
+            Cita c = inv.getArgument(0);
+            c.setId(21L);
+            return c;
+        });
+
+        CitaResponse res = citaService.reprogramar(20L, nueva);
+
+        assertThat(res.id()).isEqualTo(21L);
+        assertThat(res.estado()).isEqualTo(EstadoCita.PROGRAMADA);
+        assertThat(res.fechaHora()).isEqualTo(nueva);
+        // la cita anterior quedo cancelada
+        assertThat(original.getEstado()).isEqualTo(EstadoCita.CANCELADA);
+        assertThat(original.getFechaCancelacion()).isEqualTo(AHORA);
+    }
+
+    @Test
+    void reprogramar_franjaOcupada_rechazaYNoGuardaNueva() {
+        Cita original = citaProgramada(22L, LocalDateTime.of(2026, 7, 6, 14, 0));
+        LocalDateTime nueva = LocalDateTime.of(2026, 7, 7, 11, 0);
+        when(citaRepository.findById(22L)).thenReturn(Optional.of(original));
+        when(citaRepository.existsByMedicoIdAndFechaHoraAndEstado(any(), any(), any())).thenReturn(true);
+
+        assertThatThrownBy(() -> citaService.reprogramar(22L, nueva))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining("medico ya tiene");
+        verify(citaRepository, never()).save(any());
+    }
+
+    @Test
+    void reprogramar_citaNoProgramada_rechaza() {
+        Cita original = citaProgramada(23L, LocalDateTime.of(2026, 7, 6, 14, 0));
+        original.setEstado(EstadoCita.CANCELADA);
+        when(citaRepository.findById(23L)).thenReturn(Optional.of(original));
+
+        assertThatThrownBy(() -> citaService.reprogramar(23L, LocalDateTime.of(2026, 7, 7, 11, 0)))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining("PROGRAMADA");
+    }
+
     private Cita citaProgramada(Long id, LocalDateTime fechaHora) {
         return Cita.builder()
                 .id(id).paciente(paciente).medico(medico)

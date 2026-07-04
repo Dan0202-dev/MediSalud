@@ -142,7 +142,16 @@ Desde Swagger UI se pueden probar todos los endpoints con "Try it out".
 
 ### Consola de base de datos (H2)
 
-- **H2 Console**: http://localhost:8080/h2-console
+Por seguridad, la consola H2 está **desactivada por defecto** (no debe exponerse en
+producción). Se habilita solo con el perfil `dev`:
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+# o con el JAR:
+java -jar target/agendamiento-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+```
+
+- **H2 Console** (solo perfil `dev`): http://localhost:8080/h2-console
 - JDBC URL: `jdbc:h2:file:./data/medisalud` · Usuario: `sa` · Contraseña: *(vacía)*
 
 ---
