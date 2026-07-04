@@ -436,7 +436,7 @@ Todas las respuestas de error comparten un cuerpo uniforme, producido por
 ./mvnw test
 ```
 
-La suite (38 pruebas) cubre los flujos críticos y casos borde:
+La suite (52 pruebas) cubre los flujos críticos y casos borde:
 
 - **`HorarioAtencionServiceTest`** — generación de franjas (20 entre semana, 10 los
   sábados, 0 domingos/festivos) y validación de franjas (alineación a 30 min, límites).
@@ -444,10 +444,14 @@ La suite (38 pruebas) cubre los flujos críticos y casos borde:
   cancelación con y sin penalización, cancelación de cita no programada,
   reprogramación (RN-06: franja libre, franja ocupada, estado inválido) y cálculo de
   disponibilidad excluyendo franjas ocupadas. Usa un `Clock` fijo para los bordes temporales.
+- **`MedicoRequestValidationTest`** — validación del contrato de médico (RF-01):
+  campos obligatorios, formato de email, teléfono ≥7 dígitos y opcionalidad.
+- **`PacienteRequestValidationTest`** — validación del contrato de paciente (RF-02) y
+  la parte de RN-03 del registro: obligatorios, documento ≥7, formato de email/teléfono
+  y fecha de nacimiento no futura.
 - **`MedicoServiceTest`** — alta con solo campos obligatorios y normalización de los
   opcionales (teléfono/email) a `null`.
 - **`PacienteServiceTest`** — alta, documento duplicado y recurso inexistente.
-- **`TelefonoValidacionTest`** — el teléfono exige al menos 7 dígitos reales (RF-01/RF-02).
 - **`MedicoControllerTest` / `CitaControllerTest`** — capa web (MockMvc): códigos
   HTTP 201/400/409/200/404 (incluida ruta inexistente) y forma de la respuesta.
 
