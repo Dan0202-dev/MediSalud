@@ -21,8 +21,9 @@ public record MedicoRequest(
         String especialidad,
 
         // Opcional (RF-01): puede omitirse o venir vacio; si trae contenido, debe
-        // tener al menos 7 digitos (se admiten separadores). El vacio se normaliza a null.
-        @Pattern(regexp = "^(|[0-9()+\\-\\s]{7,30})$",
+        // tener al menos 7 digitos reales (se admiten separadores como - ( ) + espacio).
+        // El lookahead (?=(?:\D*\d){7}) exige >=7 digitos; el vacio se normaliza a null.
+        @Pattern(regexp = "^(|(?=(?:\\D*\\d){7})[0-9()+\\-\\s]{7,30})$",
                 message = "El telefono debe tener al menos 7 digitos")
         String telefono,
 

@@ -22,7 +22,8 @@ public record PacienteRequest(
         String documento,
 
         @NotBlank(message = "El telefono es obligatorio")
-        @Pattern(regexp = "^[0-9()+\\-\\s]{7,30}$",
+        // >=7 digitos reales (el lookahead los cuenta ignorando separadores).
+        @Pattern(regexp = "^(?=(?:\\D*\\d){7})[0-9()+\\-\\s]{7,30}$",
                 message = "El telefono debe tener al menos 7 digitos")
         String telefono,
 
