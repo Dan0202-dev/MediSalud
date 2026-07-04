@@ -95,6 +95,24 @@ public class CitaService {
         return CitaResponse.fromEntity(cita);
     }
 
+    /**
+     * Marca una cita como ATENDIDA. Solo aplica a citas PROGRAMADAS cuya hora ya
+     * transcurrio (no se puede atender una cita futura).
+     */
+    @Transactional
+    public CitaResponse atender(Long citaId) {
+        Cita cita = buscarEntidad(citaId);
+        if (cita.getEstado() != EstadoCita.PROGRAMADA) {
+            throw new BusinessRuleException(
+                    "Solo se pueden atender citas en estado PROGRAMADA (estado actual: " + cita.getEstado() + ")");
+        }
+        if (cita.getFechaHora().isAfter(ahora())) {
+            throw new BusinessRuleException("No se puede marcar como ATENDIDA una cita cuya hora aun no ha llegado");
+        }
+        cita.setEstado(EstadoCita.ATENDIDA);
+        return CitaResponse.fromEntity(cita);
+    }
+
     // ------------------------------------------------------------------ RN-06
     @Transactional
     public CitaResponse reprogramar(Long citaId, LocalDateTime nuevaFechaHora) {

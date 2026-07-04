@@ -204,6 +204,38 @@ class CitaServiceTest {
                 .hasMessageContaining("PROGRAMADA");
     }
 
+    // --------------------------------------------------------------- ATENDIDA
+    @Test
+    void atender_citaProgramadaYaTranscurrida_laMarcaAtendida() {
+        Cita cita = citaProgramada(30L, LocalDateTime.of(2026, 7, 6, 8, 0)); // antes de AHORA (09:00)
+        when(citaRepository.findById(30L)).thenReturn(Optional.of(cita));
+
+        CitaResponse res = citaService.atender(30L);
+
+        assertThat(res.estado()).isEqualTo(EstadoCita.ATENDIDA);
+    }
+
+    @Test
+    void atender_citaFutura_rechaza() {
+        Cita cita = citaProgramada(31L, LocalDateTime.of(2026, 7, 6, 14, 0)); // despues de AHORA
+        when(citaRepository.findById(31L)).thenReturn(Optional.of(cita));
+
+        assertThatThrownBy(() -> citaService.atender(31L))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining("aun no ha llegado");
+    }
+
+    @Test
+    void atender_citaNoProgramada_rechaza() {
+        Cita cita = citaProgramada(32L, LocalDateTime.of(2026, 7, 6, 8, 0));
+        cita.setEstado(EstadoCita.CANCELADA);
+        when(citaRepository.findById(32L)).thenReturn(Optional.of(cita));
+
+        assertThatThrownBy(() -> citaService.atender(32L))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining("PROGRAMADA");
+    }
+
     // ----------------------------------------------------------------- RF-04
     @Test
     void franjasDisponibles_excluyeLasOcupadas() {

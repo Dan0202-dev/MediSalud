@@ -79,6 +79,12 @@ public class CitaController {
         return ResponseEntity.ok(citaService.cancelar(id));
     }
 
+    @Operation(summary = "Marcar una cita como ATENDIDA")
+    @PostMapping("/{id}/atender")
+    public ResponseEntity<CitaResponse> atender(@PathVariable Long id) {
+        return ResponseEntity.ok(citaService.atender(id));
+    }
+
     @Operation(summary = "Reprogramar una cita a una nueva franja (RN-06)")
     @PutMapping("/{id}/reprogramar")
     public ResponseEntity<CitaResponse> reprogramar(@PathVariable Long id,

@@ -314,6 +314,7 @@ Content-Type: application/json
 | `GET` | `/api/citas` | Listar citas con filtros (RF-06) |
 | `GET` | `/api/citas/{id}` | Obtener una cita |
 | `POST` | `/api/citas/{id}/cancelar` | Cancelar una cita (RF-05) |
+| `POST` | `/api/citas/{id}/atender` | Marcar una cita como ATENDIDA |
 | `PUT` | `/api/citas/{id}/reprogramar` | Reprogramar una cita (RN-06) |
 
 **Reservar cita**
@@ -363,6 +364,15 @@ POST /api/citas/1/cancelar
 ```json
 200 OK
 { "id": 1, "estado": "CANCELADA", "fechaCancelacion": "2026-07-06T09:30:00", ... }
+```
+
+**Marcar como atendida** (solo citas PROGRAMADAS cuya hora ya pasó)
+```http
+POST /api/citas/1/atender
+```
+```json
+200 OK
+{ "id": 1, "estado": "ATENDIDA", ... }
 ```
 
 **Reprogramar cita**
@@ -436,7 +446,7 @@ Todas las respuestas de error comparten un cuerpo uniforme, producido por
 ./mvnw test
 ```
 
-La suite (52 pruebas) cubre los flujos críticos y casos borde:
+La suite (61 pruebas) cubre los flujos críticos y casos borde:
 
 - **`HorarioAtencionServiceTest`** — generación de franjas (20 entre semana, 10 los
   sábados, 0 domingos/festivos) y validación de franjas (alineación a 30 min, límites).
@@ -452,6 +462,10 @@ La suite (52 pruebas) cubre los flujos críticos y casos borde:
 - **`MedicoServiceTest`** — alta con solo campos obligatorios y normalización de los
   opcionales (teléfono/email) a `null`.
 - **`PacienteServiceTest`** — alta, documento duplicado y recurso inexistente.
+- **`CitaRepositoryTest` / `PenalizacionRepositoryTest`** (`@DataJpaTest`) — tests de
+  integración que ejecutan las consultas derivadas y las `Specification` contra una
+  BD real (H2 embebida): no-duplicidad, rango de disponibilidad y conteo de
+  penalizaciones por ventana temporal.
 - **`MedicoControllerTest` / `CitaControllerTest`** — capa web (MockMvc): códigos
   HTTP 201/400/409/200/404 (incluida ruta inexistente) y forma de la respuesta.
 
@@ -492,5 +506,5 @@ La imagen es desplegable en cualquier PaaS que soporte contenedores
   instancias, se reforzaría con un índice único parcial o bloqueo optimista; se
   documenta como mejora futura por estar fuera del alcance del MVP.
 - **Sin autenticación/autorización**: fuera de alcance de la prueba.
-- **Estado `ATENDIDA`**: contemplado en el modelo (`EstadoCita`) y en los filtros de
-  listado; la transición se implementaría en una iteración posterior.
+- **Paginación**: los listados devuelven todos los resultados; para grandes volúmenes
+  se añadiría paginación (`Pageable`). Fuera de alcance del MVP.
