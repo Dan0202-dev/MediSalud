@@ -100,34 +100,94 @@ src/main/java/com/medisalud/agendamiento
 
 ## Cómo ejecutar el proyecto
 
-### Requisitos
+Guía paso a paso. No necesitas saber Java ni Maven; solo seguir los pasos en orden.
 
-- **JDK 21** (por ejemplo Amazon Corretto 21 o Eclipse Temurin 21).
-- No hace falta instalar Maven: se incluye el wrapper (`mvnw` / `mvnw.cmd`).
+### Paso 1 — Instalar Java (JDK 21)
 
-### Opción A — Maven wrapper
+Es el único requisito. Descarga e instala **JDK 21** (gratis) desde
+[Adoptium Temurin 21](https://adoptium.net/temurin/releases/?version=21) o
+[Amazon Corretto 21](https://aws.amazon.com/corretto/).
+
+Para comprobar que quedó instalado, abre una terminal y ejecuta:
 
 ```bash
-# Linux / macOS
-./mvnw spring-boot:run
+java -version
+```
 
+Debe mostrar una versión que empiece por `21` (por ejemplo `openjdk version "21.0.x"`).
+Si muestra otra versión (por ejemplo `1.8` u `11`), instala el JDK 21 antes de seguir.
+
+> No hace falta instalar Maven: el proyecto incluye el wrapper (`mvnw`), que se
+> encarga de todo en el primer arranque.
+
+### Paso 2 — Obtener el código y entrar a la carpeta
+
+**Si clonaste el repositorio:**
+```bash
+git clone https://github.com/Dan0202-dev/MediSalud.git
+cd MediSalud
+```
+
+**Si descargaste el .zip:** descomprímelo y entra a la carpeta que se crea. Suele
+llamarse `MediSalud-main`:
+```bash
+# Windows (PowerShell)
+cd MediSalud-main
+
+# Linux / macOS
+cd MediSalud-main
+```
+
+> Importante: debes situarte en la carpeta que contiene el archivo `pom.xml` y el
+> `mvnw`. Si al hacer `dir` (Windows) o `ls` (Linux/macOS) ves `pom.xml`, estás en
+> el lugar correcto.
+
+### Paso 3 — Ejecutar la aplicación
+
+Desde esa carpeta, ejecuta **un solo comando** según tu sistema:
+
+```bash
 # Windows (PowerShell)
 .\mvnw.cmd spring-boot:run
+
+# Linux / macOS
+./mvnw spring-boot:run
 ```
 
-### Opción B — Empaquetar y ejecutar el JAR
+La **primera vez** descargará las dependencias (puede tardar unos minutos). Cuando
+veas en la consola una línea como:
 
+```
+Started AgendamientoApplication in X.XXX seconds
+```
+
+la aplicación ya está corriendo en **http://localhost:8080**.
+
+### Paso 4 — Comprobar que funciona
+
+Abre el navegador en:
+
+- **Swagger UI** (probar la API): http://localhost:8080/swagger-ui.html
+- O lista los médicos de ejemplo: http://localhost:8080/api/medicos
+
+La app carga automáticamente **3 médicos de ejemplo** la primera vez.
+
+### Paso 5 — Detener la aplicación
+
+En la terminal donde está corriendo, pulsa **`Ctrl + C`**.
+
+---
+
+### Alternativas (opcional)
+
+**Ejecutar desde un IDE** (IntelliJ IDEA / VS Code): abre la carpeta del proyecto y
+ejecuta la clase `AgendamientoApplication` con el botón ▶.
+
+**Empaquetar un JAR y ejecutarlo** (sin el wrapper cada vez):
 ```bash
-./mvnw clean package
+# Windows: .\mvnw.cmd clean package    |    Linux/macOS: ./mvnw clean package
 java -jar target/agendamiento-0.0.1-SNAPSHOT.jar
 ```
-
-### Opción C — Desde el IDE
-
-Ejecutar la clase `AgendamientoApplication` (botón ▶ en IntelliJ / VS Code).
-
-La aplicación queda disponible en **http://localhost:8080** y carga automáticamente
-los 3 médicos de ejemplo la primera vez.
 
 ---
 
