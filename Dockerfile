@@ -14,11 +14,13 @@ RUN mvn -q clean package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Usuario sin privilegios
-RUN addgroup -S app && adduser -S app -G app
-USER app
-
 COPY --from=build /app/target/agendamiento-*.jar app.jar
+
+# Usuario sin privilegios; /app (y ./data para la BD H2) debe ser escribible por el.
+RUN addgroup -S app && adduser -S app -G app \
+    && mkdir -p /app/data \
+    && chown -R app:app /app
+USER app
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
