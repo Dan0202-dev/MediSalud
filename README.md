@@ -7,7 +7,7 @@ disponibilidad y reducir el ausentismo.
 
 > Prueba técnica — backend (API REST). No incluye frontend ni autenticación (fuera de alcance).
 
-## 🌐 Demo en vivo
+## Demo en vivo
 
 Desplegada en Render: **https://medisalud.onrender.com**
 
@@ -75,14 +75,14 @@ Controller  →  Service  →  Repository  →  Base de datos
 
 ### ¿Por qué capas y no hexagonal?
 
-La arquitectura hexagonal (puertos y adaptadores) aporta valor cuando existen
+La arquitectura hexagonal aporta valor cuando existen
 **múltiples adaptadores intercambiables** (varias fuentes de datos, varios
 protocolos de entrada) y se quiere un dominio totalmente aislado del framework. En
 este MVP hay **una sola API REST y una sola base de datos**, sin integraciones
 externas. Introducir puertos con una única implementación sería *over-engineering*:
 más clases y ceremonia sin un eje de cambio real que lo justifique (YAGNI).
 
-Aun así, se capturan las ventajas clave que aporta hexagonal **sin su costo**:
+Aun así, se capturan las ventajas clave que aporta hexagonal sin su costo:
 
 - El dominio y la lógica están aislados del transporte (DTOs ≠ entidades).
 - La lógica vive en el `service`, no en el `controller`.
@@ -111,8 +111,6 @@ src/main/java/com/medisalud/agendamiento
 
 ## Cómo ejecutar el proyecto
 
-Guía paso a paso. No necesitas saber Java ni Maven; solo seguir los pasos en orden.
-
 ### Paso 1 — Instalar Java (JDK 21)
 
 Es el único requisito. Descarga e instala **JDK 21** (gratis) desde
@@ -139,8 +137,7 @@ git clone https://github.com/Dan0202-dev/MediSalud.git
 cd MediSalud
 ```
 
-**Si descargaste el .zip:** descomprímelo y entra a la carpeta que se crea. Suele
-llamarse `MediSalud-main`:
+**Si descargaste el .zip:** descomprímelo y entra a la carpeta que se crea:
 ```bash
 # Windows (PowerShell)
 cd MediSalud-main
