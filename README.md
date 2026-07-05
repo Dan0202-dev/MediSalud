@@ -7,6 +7,17 @@ disponibilidad y reducir el ausentismo.
 
 > Prueba técnica — backend (API REST). No incluye frontend ni autenticación (fuera de alcance).
 
+## 🌐 Demo en vivo
+
+Desplegada en Render: **https://medisalud.onrender.com**
+
+- **Swagger UI**: https://medisalud.onrender.com/swagger-ui.html
+- **API (médicos)**: https://medisalud.onrender.com/api/medicos
+
+> El plan gratuito de Render suspende el servicio tras ~15 min de inactividad; la
+> primera petición puede tardar ~30-60 s en "despertar". Los datos son efímeros
+> (H2 en archivo sobre disco no persistente) y se reinician en cada redeploy.
+
 ---
 
 ## Tabla de contenidos
